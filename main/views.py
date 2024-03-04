@@ -25,7 +25,7 @@ def create_class_schedule(request):
     venue = request.data.get("vanue")
     facilitator_id = request.data.get("facilitator_id")
     is_repeated = request.data.get("is_repeated")
-    repeate_frequency = request.data.get("repeate_frequency")
+    repeat_frequency = request.data.get("repeat_frequency")
     course_id = request.data.get("course_id")
     meeting_type = request.data.get("meeting_type")
 
@@ -58,7 +58,7 @@ def create_class_schedule(request):
         description=description,
         venue=venue,
         is_repeated=is_repeated,
-        repeate_frequency=repeate_frequency,
+        repeat_frequency=repeat_frequency,
         start_date_and_time=datetime.now(),
         end_date_and_time=datetime.now(),
         facilitator=facilitator,
