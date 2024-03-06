@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "users",
     "main",
     "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,18 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = "users.IMUser"
 
 ROOT_URLCONF = "API_v2.urls"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated'
+    ),
+}
 
 TEMPLATES = [
     {
