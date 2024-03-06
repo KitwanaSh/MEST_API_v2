@@ -18,6 +18,9 @@ class IMUser(AbstractUser):
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='EIT')
     date_modified = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)
+    is_blocked = models.BooleanField(default=False)
+    temporal_login_fail = models.IntegerField(default=0)
+    permanent_login_fail = models.IntegerField(default=0)
     
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
