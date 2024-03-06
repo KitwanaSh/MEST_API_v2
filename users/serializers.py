@@ -36,4 +36,4 @@ class CohortMemberSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     member = UserSerializer(many=False)
     is_active = serializers.BooleanField()
-    author = serializers.CharField()
+    author = UserSerializer(many=False)
