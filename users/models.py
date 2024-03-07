@@ -15,6 +15,7 @@ class IMUser(AbstractUser):
     last_name = models.CharField(max_length=155, blank=True)
     middle_name = models.CharField(max_length=155, blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
+    unique_code = models.CharField(max_length=20, blank=True)
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='EIT')
     date_modified = models.DateTimeField(auto_now=True)
     date_created = models.DateTimeField(auto_now_add=True)

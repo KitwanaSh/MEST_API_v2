@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework import viewsets, status
 from .models import *
 from .serializers import *
+from API_v2.utils import *
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -65,5 +66,27 @@ def user_login(request):
         #5 respond to the users request
     except IMUser.DoesNotExist:
         return Response({"detail": "Username does not exist"}, status.HTTP_400_BAD_REQUEST)
+    
+
+class ForgotPasswordAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        #1. Receive the username (email)
+        username = request.data.get("username")
+        if not username:
+            return generate_400_response("Username is required")
+        #2. Check if the user exists
+        try:
+            user = IMUser.objects.get(username=username)
+            otp_code = generate_unique_code()
+            user.unique_code = otp_code
+            user.save()
+        
+        #3. Send OTP code
+
+        #4.. Respond to the user
+            return Response({"detail": "OTP code has been sent to your email"}, status.HTTP_200_OK)
+        except IMUser.DoesNotExist:
+            return generate_400_response("Username is does not exist")
 
     
