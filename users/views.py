@@ -96,14 +96,14 @@ class ResetPasswordAPIView(APIView):
     def post(self, request):
         username = request.data.get("username")
         unique_code = request.data.get("unique_code")
-        password = request.data.get("password")
+        new_password = request.data.get("new_password")
 
-        if not username or not unique_code or not password:
+        if not username or not unique_code or not new_password:
             return Response({"detail": "All fields are required"}, status.HTTP_400_BAD_REQUEST)
 
         try:
-            user = IMUser.objects.get(username=username, unique_code=unique_code, password=password)
-            user.set_password(password)
+            user = IMUser.objects.get(username=username, unique_code=unique_code, password=new_password)
+            user.set_password(new_password)
             user.save()
 
             return Response({"detail": "Password reset successfully"}, status.HTTP_200_OK)
