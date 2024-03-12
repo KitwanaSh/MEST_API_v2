@@ -59,11 +59,17 @@ class Query(models.Model):
         ('DECLINED', 'Declined'),
         ('RESOLVED', 'Resolved'), 
     )
+    QUERY_TYPES = (
+        ("FACILITY", "Facility"),
+        ("LOGISTICS", "Logistics"),
+        ("KITCHEN", "Kitchen"),
+        )
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     submitted_by = models.ForeignKey(IMUser, on_delete=models.CASCADE, related_name='submitted_queries')
     assigned_to = models.ForeignKey(IMUser, on_delete=models.CASCADE, related_name='assigned_queries', blank=True, null=True)
     resolution_status = models.CharField(max_length=30, choices=RESOLUTION_STATUSES, default='PENDING')
+    query_type = models.CharField(max_length=30, choices=QUERY_TYPES, default='FACILITY', blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(IMUser, on_delete=models.CASCADE, related_name="query_author")

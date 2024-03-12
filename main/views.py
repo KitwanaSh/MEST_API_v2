@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, action
 from .models import *
 from .serializers import *
 from datetime import datetime
@@ -71,3 +71,26 @@ def create_class_schedule(request):
     serializer = ClassScheduleSerializer(class_schedule, many=False)
 
     return Response({"message": "Schedule successfully created", "data": serializer.data}, status.HTTP_200_OK)
+
+class QueryModelView(viewsets.ModelViewSet):
+    @action(detail=False, methods=["post"])
+    def raise_query(self, request):
+        title = request.data.get("title")
+        description = request.data.get("description", None)
+        query_type = request.data.get("query_type", None)
+        assignee = None
+
+        # if query_type == "FACILITY":
+        #     assignee = IMUser.objects.get(email="lucky@mail.com")
+
+        query = Query.objects.create(
+            title = title,
+            description = description,
+            query_type = query_type,
+            submitted_by = request.user,
+            author=request.user
+        )
+
+        query.save()
+
+        return Response({"message": "Query successfully submitted"})
