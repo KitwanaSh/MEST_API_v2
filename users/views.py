@@ -1,10 +1,12 @@
 from django.db.models import Q
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth   import authenticate, login
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework import viewsets, status
+
+
 from .models import *
 from .serializers import *
 from API_v2.utils import *
@@ -88,5 +90,61 @@ class ForgotPasswordAPIView(APIView):
             return Response({"detail": "OTP code has been sent to your email"}, status.HTTP_200_OK)
         except IMUser.DoesNotExist:
             return generate_400_response("Username is does not exist")
+        
+class ResetPasswordAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        username = request.data.get("username")
+        unique_code = request.data.get("unique_code")
+        password = request.data.get("password")
 
+        if not username or not unique_code or not password:
+            return Response({"detail": "All fields are required"}, status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = IMUser.objects.get(username=username, unique_code=unique_code, password=password)
+            user.set_password(password)
+            user.save()
+
+            return Response({"detail": "Password reset successfully"}, status.HTTP_200_OK)
+        except IMUser.DoesNotExist:
+            return Response({"detail": "Invalid username or unique code"}, status.HTTP_400_BAD_REQUEST)
+
+        
+
+class UserProfileAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        user_data = {
+            "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "middle_name": user.middle_name,
+            "phone_number": user.phone_number,
+            "user_type": user.user_type,
+            "date_created": user.date_created,
+            "date_modified": user.date_modified,
+            "is_blocked": user.is_blocked
+        }
+
+        return Response(user_data, status.HTTP_200_OK)
     
+class ChangePasswordAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+
+        if not old_password or not new_password:
+            return Response({"detail": "Both old and new passwords are required"}, status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        if not user.check_password(old_password):
+            return Response({"detail": "Old password is incorrect"}, status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        return Response({"detail": "Password changed successfully"}, status.HTTP_200_OK)
+    
+
