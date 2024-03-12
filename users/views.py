@@ -113,19 +113,19 @@ class ResetPasswordAPIView(APIView):
         
 
 class UserProfileAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     def get(self, request):
-        user = request.user
+        # user = request.data.get(IMUser)
         user_data = {
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "middle_name": user.middle_name,
-            "phone_number": user.phone_number,
-            "user_type": user.user_type,
-            "date_created": user.date_created,
-            "date_modified": user.date_modified,
-            "is_blocked": user.is_blocked
+            "username": request.data.get("username"),
+            "first_name": request.data.get("first_name"),
+            "last_name": request.data.get("last_name"),
+            "middle_name": request.data.get("middle_name"),
+            "phone_number": request.data.get("phone_number"),
+            "user_type": request.data.get("user_type"),
+            "date_created": request.data.get("date_created"),
+            "date_modified": request.data.get("date_modified"),
+            "is_blocked": request.data.get("is_bloqued")
         }
 
         return Response(user_data, status.HTTP_200_OK)
