@@ -2,11 +2,12 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, action
+from rest_framework.pagination import PageNumberPagination
+
 from .models import *
 from .serializers import *
 from datetime import datetime
 from API_v2.utils import *
-
 
 
 @api_view(['GET'])
@@ -100,8 +101,9 @@ class QueryModelView(viewsets.ModelViewSet):
     def filter_queries(self, request):
         search_text = request.data.get("search_text")
         status = request.data.get("status")
+        paginator = PageNumberPagination()
 
         queryset = Query.objects.all()
         serializer = QuerySerializer(queryset, many=True)
 
-        return generate_200_response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
