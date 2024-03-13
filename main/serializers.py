@@ -17,3 +17,14 @@ class ClassScheduleSerializer(serializers.Serializer):
     repeat_frequency = serializers.CharField()
     organizer = UserSerializer(many=False)
 
+class QuerySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    description = serializers.CharField()
+    submitted_by = UserSerializer(many=False)
+    assigned_to = UserSerializer(many=False)
+    resolution_status = serializers.CharField()
+    query_type = serializers.CharField()
+    date_created = serializers.DateTimeField()
+    author = UserSerializer(many=False)
+

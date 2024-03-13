@@ -5,6 +5,9 @@ from rest_framework.response import Response
 def generate_400_response(message):
     return Response({"detail": message}, status.HTTP_400_BAD_REQUEST)
 
+def generate_200_response(data):
+    return Response({"result": data}, status.HTTP_200_OK)
+
 def generate_unique_code():
     CHARSET = '0123456789'
     LENGTH = 6

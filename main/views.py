@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view, action
 from .models import *
 from .serializers import *
 from datetime import datetime
+from API_v2.utils import *
 
 
 
@@ -94,3 +95,13 @@ class QueryModelView(viewsets.ModelViewSet):
         query.save()
 
         return Response({"message": "Query successfully submitted"})
+    
+    @action(detail=False, methods=["post"])
+    def filter_queries(self, request):
+        search_text = request.data.get("search_text")
+        status = request.data.get("status")
+
+        queryset = Query.objects.all()
+        serializer = QuerySerializer(queryset, many=True)
+
+        return generate_200_response(serializer.data)
