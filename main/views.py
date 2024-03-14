@@ -107,3 +107,16 @@ class QueryModelView(viewsets.ModelViewSet):
         serializer = QuerySerializer(queryset, many=True)
 
         return paginator.get_paginated_response(serializer.data)
+    
+    @action(detail=False, methods=["post"])
+    def update_queries(self, request, id):
+        status = request.data.get("resolution_status")
+
+        queryset = Query.objects.get(pk=id)
+        serializer = QuerySerializer(instance=queryset, data=status)
+
+        if serializer.is_valid():
+            serializer.save()
+
+    
+
