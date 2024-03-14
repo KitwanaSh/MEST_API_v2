@@ -112,11 +112,25 @@ class QueryModelView(viewsets.ModelViewSet):
     def update_queries(self, request, id):
         status = request.data.get("resolution_status")
 
-        queryset = Query.objects.get(pk=id)
+        queryset = Query.objects.get(id)
         serializer = QuerySerializer(instance=queryset, data=status)
 
         if serializer.is_valid():
             serializer.save()
 
-    
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["post"])
+    def my_queries(self, request, id):
+        user_type = request.data.get("user_type")
+
+        if user_type == "ADMIN":
+            queryset = Query.objects.all()
+            serializer = QuerySerializer(queryset, many=True)
+
+        if user_type == "IT":
+            queryset = Query.objects.get(id)
+            serializer = QuerySerializer(queryset, many=False)
+
+        return Response(serializer.data)
 
