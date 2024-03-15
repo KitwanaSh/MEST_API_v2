@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, action
 from rest_framework.pagination import PageNumberPagination
@@ -134,3 +135,36 @@ class QueryModelView(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+class MeetingModelView(viewsets.ModelViewSet):
+    """
+        To create a meeting schedule
+    """
+    queryset = ClassSchedule.objects.all()
+    serializer_class = ClassScheduleSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(organizer=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=["get"])
+    def filter_class_schedules(self, request):
+        queryset = self.queryset.order_by('start_date_and_time')
+        serializer = self.get_serializer(queryset, many=True)
+        
+        return Response(serializer.data)
